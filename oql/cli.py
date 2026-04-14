@@ -17,7 +17,7 @@ def main() -> None:
 @main.command()
 @click.argument("file", type=click.Path(exists=True))
 @click.option("--step", is_flag=True, help="Manual step-by-step mode")
-@click.option("--mode", type=click.Choice(["dry-run", "execute"]), default="dry-run")
+@click.option("--mode", type=click.Choice(["dry-run", "execute"]), default="execute")
 @click.option("--firmware-url", default="http://localhost:8202")
 def run(file: str, step: bool, mode: str, firmware_url: str) -> None:
     """Run an OQL scenario file."""

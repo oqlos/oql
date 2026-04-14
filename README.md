@@ -1,26 +1,140 @@
 # OQL — Command Line Interface for OqlOS
 
+OQL CLI (`oqlctl`) is the command-line interface for executing OQL (Operation Query Language) scenarios. It provides tools to run, validate, and interact with hardware testing scenarios defined in `.oql` files.
+
 ## Installation
 
 ```bash
+# Install from source
 pip install -e .
+
+# Install with development dependencies
+pip install -e ".[dev]"
 ```
 
-## Usage
+## Requirements
+
+- Python 3.10+
+- `oqlos` runtime (automatically installed as dependency)
+- Click 8.0+, Rich 13.0+, HTTPX 0.27+
+
+## Commands
+
+### `run` — Execute a scenario
+
+Run an OQL scenario file against hardware or in simulation mode.
 
 ```bash
-# Run a scenario
+# Execute mode (default - run on actual hardware)
+oqlctl run scenario.oql
+
+# Dry-run mode (validate and simulate without hardware)
 oqlctl run scenario.oql --mode dry-run
 
-# Validate a scenario
+# Step-by-step manual execution
+oqlctl run scenario.oql --step
+
+# Custom firmware server URL
+oqlctl run scenario.oql --firmware-url http://localhost:8202
+```
+
+### `validate` — Parse and validate
+
+Check an OQL file for syntax errors without executing.
+
+```bash
 oqlctl validate scenario.oql
+```
 
-# List hardware
+### `hardware` — List peripherals
+
+Query the OqlOS API for connected hardware devices.
+
+```bash
+# Default localhost
+oqlctl hardware
+
+# Custom OqlOS URL
 oqlctl hardware --url http://localhost:8200
+```
 
-# List scenarios
+### `scenarios` — List scenarios
+
+List all available scenarios registered with the OqlOS API.
+
+```bash
+oqlctl scenarios
 oqlctl scenarios --url http://localhost:8200
+```
 
-# Interactive shell
+### `shell` — Interactive REPL
+
+Start an interactive OQL shell for testing commands line-by-line.
+
+```bash
 oqlctl shell
 ```
+
+**Shell commands:**
+- Type OQL commands directly (e.g., `→ Valve.open NC`, `WAIT 1000`)
+- `help` — Show available commands
+- `exit` or `quit` — Exit the shell
+
+## OQL Language Quick Reference
+
+OQL is a declarative DSL for hardware testing scenarios:
+
+```oql
+SCENARIO: "Pressure Test"
+DEVICE_TYPE: "BA"
+DEVICE_MODEL: "PSS 7000"
+
+GOAL: Check Pressure
+  1. Open valve:
+    → Valve.open NC
+    WAIT 2000
+    → Sensor.read AI01
+    IF [AI01] [>=] [-15 mbar] ELSE ERROR "Pressure too low"
+```
+
+**Key constructs:**
+- `SCENARIO: "name"` — Scenario metadata
+- `DEVICE_TYPE:`, `DEVICE_MODEL:` — Device specification
+- `GOAL:` — Define test goals
+- `→ Target.method` — Execute hardware actions
+- `WAIT ms` — Pause execution
+- `IF [sensor] [op] [value] ELSE ERROR "msg"` — Conditional checks
+- `SAVE: variable` — Store measurement results
+
+See [OQL Specification](../oqlos/docs/oql-spec.md) for full language reference.
+
+## Project Structure
+
+```
+oql/
+├── oql/
+│   ├── cli.py           # Main CLI entry point
+│   ├── adapters/
+│   │   └── local.py     # Direct oqlos integration
+│   ├── shell/           # Interactive shell implementation
+│   │   ├── commands.py  # Shell command registry
+│   │   ├── executor.py  # DSL execution engine
+│   │   └── runner.py    # Shell/ script runner
+│   └── core/            # Core utilities
+├── tests/               # Test suite
+└── pyproject.toml       # Package configuration
+```
+
+## Development
+
+```bash
+# Run tests
+pytest
+
+# Run specific test
+pytest tests/test_cli.py -v
+```
+
+## License
+
+Apache-2.0
