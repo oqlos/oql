@@ -80,6 +80,26 @@ oqlctl shell
 - `help` — Show available commands
 - `exit` or `quit` — Exit the shell
 
+> `shell` is the easiest place to prototype commands interactively.
+> For a single command sent to real hardware, use `cmd` below.
+
+### `cmd` — Execute one command on hardware
+
+Send a single OQL command to the firmware in `execute` mode.
+
+```bash
+# Simplest one-liner for hardware execution
+oqlctl cmd "SET 'pompa 1' '0'"
+
+# Dry-run / simulation only
+oqlctl cmd "SET 'pompa 1' '0'" --mode dry-run
+
+# Custom firmware server URL
+oqlctl cmd "SET 'pompa 1' '0'" --firmware-url http://localhost:8202
+```
+
+Use `run` with a `.oql` file when you need multiple steps or more complex flow.
+
 ## OQL Language Quick Reference
 
 OQL is a declarative DSL for hardware testing scenarios:

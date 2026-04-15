@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sys
+import textwrap
 from pathlib import Path
 
 import click
@@ -12,6 +13,31 @@ import click
 @click.version_option(package_name="oql")
 def main() -> None:
     """oqlctl — OQL command line interface."""
+
+
+def _build_single_command_scenario(command: str) -> str:
+    """Wrap a single OQL command line in a minimal scenario document."""
+    stripped = command.strip()
+    if not stripped:
+        raise click.UsageError("Command cannot be empty")
+
+    indented_command = textwrap.indent(stripped, "    ")
+    return (
+        'SCENARIO: "Single command"\n'
+        'GOAL: Execute command\n'
+        '  1. Run command:\n'
+        f"{indented_command}\n"
+    )
+
+
+def _execute_single_command(command: str, firmware_url: str, mode: str) -> int:
+    """Execute one OQL command line by wrapping it in a minimal scenario."""
+    from oqlos.core.interpreter import CqlInterpreter
+
+    source = _build_single_command_scenario(command)
+    interp = CqlInterpreter(mode=mode, firmware_url=firmware_url)
+    result = interp.run(source, "<cmd>")
+    return 0 if result.ok else 1
 
 
 @main.command()
@@ -39,6 +65,15 @@ def validate(file: str) -> None:
     interp = CqlInterpreter(mode="validate")
     result = interp.run(source, Path(file).name)
     sys.exit(0 if result.ok else 1)
+
+
+@main.command()
+@click.argument("command", type=str)
+@click.option("--mode", type=click.Choice(["dry-run", "execute"]), default="execute")
+@click.option("--firmware-url", default="http://localhost:8202")
+def cmd(command: str, mode: str, firmware_url: str) -> None:
+    """Execute a single OQL command line."""
+    sys.exit(_execute_single_command(command, firmware_url, mode))
 
 
 @main.command()
