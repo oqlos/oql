@@ -45,14 +45,60 @@ def _execute_single_command(command: str, firmware_url: str, mode: str) -> int:
 @click.option("--step", is_flag=True, help="Manual step-by-step mode")
 @click.option("--mode", type=click.Choice(["dry-run", "execute"]), default="execute")
 @click.option("--firmware-url", default="http://localhost:8202")
-def run(file: str, step: bool, mode: str, firmware_url: str) -> None:
+@click.option("--report", type=click.Choice(["json", "junit", "html"]), default=None, help="Generate report output")
+@click.option("-o", "--output", type=click.Path(), default=None, help="Output file for report")
+def run(file: str, step: bool, mode: str, firmware_url: str, report: str | None, output: str | None) -> None:
     """Run an OQL scenario file."""
     from oqlos.core.interpreter import CqlInterpreter
 
     source = Path(file).read_text(encoding="utf-8")
     interp = CqlInterpreter(mode=mode, firmware_url=firmware_url)
     result = interp.run(source, Path(file).name)
+
+    if report:
+        report_content = _generate_report(result, report)
+        if output:
+            Path(output).write_text(report_content, encoding="utf-8")
+            click.echo(f"Report written to {output}")
+        else:
+            click.echo(report_content)
+
     sys.exit(0 if result.ok else 1)
+
+
+def _generate_report(result, fmt: str) -> str:
+    """Generate report content from a ScriptResult."""
+    if fmt == "json":
+        from oqlos.reporters.json_reporter import report_json
+        return report_json(result)
+    elif fmt == "junit":
+        from oqlos.reporters.junit import JUnitReporter
+        return JUnitReporter().generate(result)
+    elif fmt == "html":
+        from oqlos.reporters.json_reporter import report_json
+        from oqlos.reporters.html_report import render_html_report
+        data_json = report_json(result)
+        return render_html_report(data_json)
+    raise click.UsageError(f"Unknown report format: {fmt}")
+
+
+@main.command()
+@click.argument("data_file", type=click.Path(exists=True))
+@click.option("-o", "--output", type=click.Path(), default=None, help="Output HTML file")
+def report(data_file: str, output: str | None) -> None:
+    """Generate HTML report from data.json.
+
+    Pipeline: data.json → raport.html
+    """
+    from oqlos.reporters.html_report import render_html_report
+
+    data_json = Path(data_file).read_text(encoding="utf-8")
+    html = render_html_report(data_json)
+    if output:
+        Path(output).write_text(html, encoding="utf-8")
+        click.echo(f"Report written to {output}")
+    else:
+        click.echo(html)
 
 
 @main.command()
