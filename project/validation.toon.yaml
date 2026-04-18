@@ -1,0 +1,9 @@
+# vallm batch | 32f | 22✓ 0⚠ 0✗ | 2026-04-18
+
+SUMMARY:
+  scanned: 32  passed: 22 (68.8%)  warnings: 0  errors: 0  unsupported: 10
+
+UNSUPPORTED[3]{bucket,count}:
+  *.md,4
+  *.yml,2
+  other,4

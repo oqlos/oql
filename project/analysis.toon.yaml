@@ -1,0 +1,51 @@
+# code2llm | 18f 1093L | python:16,shell:2 | 2026-04-18
+# CC̄=2.4 | critical:0/63 | dups:0 | cycles:0
+
+HEALTH[0]: ok
+
+REFACTOR[0]: none needed
+
+PIPELINES[54]:
+  [1] Src [get_handler]: get_handler
+      PURITY: 100% pure
+  [2] Src [_cmd_exit]: _cmd_exit
+      PURITY: 100% pure
+  [3] Src [_cmd_events]: _cmd_events
+      PURITY: 100% pure
+  [4] Src [_cmd_clear]: _cmd_clear
+      PURITY: 100% pure
+  [5] Src [_cmd_connect]: _cmd_connect
+      PURITY: 100% pure
+
+LAYERS:
+  oql/                            CC̄=2.4    ←in:0  →out:0
+  │ cli                        179L  0C   11m  CC=5      ←0
+  │ executor                   176L  1C    8m  CC=9      ←0
+  │ commands                   138L  1C   11m  CC=11     ←0
+  │ api_commands               116L  1C    2m  CC=11     ←0
+  │ session_commands           102L  1C    5m  CC=2      ←0
+  │ runner                      84L  0C    4m  CC=8      ←0
+  │ protocol_commands           71L  1C    6m  CC=3      ←0
+  │ process_commands            68L  1C    7m  CC=3      ←0
+  │ ui_commands                 36L  1C    3m  CC=1      ←0
+  │ remote                      34L  1C    4m  CC=1      ←0
+  │ local                       20L  1C    2m  CC=1      ←0
+  │ __init__                    15L  0C    0m  CC=0.0    ←0
+  │ event_store                 15L  0C    0m  CC=0.0    ←0
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ __init__                     0L  0C    0m  CC=0.0    ←0
+  │ __init__                     0L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ project.sh                  35L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
+  │
+  ── zero ──
+     oql/adapters/__init__.py                  0L
+     oql/core/__init__.py                      0L
+
+COUPLING: no cross-package imports detected
+
+EXTERNAL:
+  validation: run `vallm batch .` → validation.toon
+  duplication: run `redup scan .` → duplication.toon

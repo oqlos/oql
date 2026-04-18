@@ -1,0 +1,9 @@
+# SCENARIO: Auto-generated from Python Tests
+# TYPE: integration
+# GENERATED: true
+
+LOG[4]{message}:
+  "Test: TestCli_test_cmd_subcommand_invokes_helper"
+  "Test: test_cmd_subcommand_invokes_helper"
+  "Test: TestCli_test_cmd_subcommand_invokes_helper"
+  "Test: test_cmd_subcommand_invokes_helper"
