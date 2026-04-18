@@ -56,15 +56,15 @@
 - **Classes**: 1
 - **File**: `ui_commands.py`
 
-### oql.adapters.local
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `local.py`
-
 ### oql.shell.api_commands
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `api_commands.py`
+
+### oql.adapters.local
+- **Functions**: 2
+- **Classes**: 1
+- **File**: `local.py`
 
 ## Key Entry Points
 
@@ -165,14 +165,6 @@ Pipeline: data.json → raport.html
 > PROCESS_NEXT {...} 
 - **Calls**: print, self.emit_event, args.strip, json.loads
 
-### oql.shell.ui_commands.UiCommandsMixin.cmd_navigate
-> NAVIGATE "/route" 
-- **Calls**: None.strip, print, self.emit_event, args.strip
-
-### oql.shell.ui_commands.UiCommandsMixin.cmd_input
-> INPUT "#selector" {"value": "..."} 
-- **Calls**: self._parse_target_and_json, print, self.emit_event, None.get
-
 ### oql.shell.session_commands.SessionCommandsMixin.cmd_record_stop
 > RECORD_STOP 
 - **Calls**: print, self.emit_event, len, len
@@ -184,6 +176,14 @@ Pipeline: data.json → raport.html
 ### oql.shell.session_commands.SessionCommandsMixin.cmd_log
 > LOG "message" {...} 
 - **Calls**: self._parse_target_and_json, None.get, print, icons.get
+
+### oql.shell.ui_commands.UiCommandsMixin.cmd_navigate
+> NAVIGATE "/route" 
+- **Calls**: None.strip, print, self.emit_event, args.strip
+
+### oql.shell.ui_commands.UiCommandsMixin.cmd_input
+> INPUT "#selector" {"value": "..."} 
+- **Calls**: self._parse_target_and_json, print, self.emit_event, None.get
 
 ### oql.adapters.remote.RemoteAdapter.list_scenarios
 - **Calls**: httpx.get, resp.raise_for_status, None.get, resp.json
@@ -281,15 +281,15 @@ execute [oql.shell.executor.DslExecutor]
 - **Methods**: 3
 - **Key Methods**: oql.shell.ui_commands.UiCommandsMixin.cmd_navigate, oql.shell.ui_commands.UiCommandsMixin.cmd_click, oql.shell.ui_commands.UiCommandsMixin.cmd_input
 
-### oql.adapters.local.LocalAdapter
-> Execute OQL commands directly via oqlos library.
-- **Methods**: 2
-- **Key Methods**: oql.adapters.local.LocalAdapter.__init__, oql.adapters.local.LocalAdapter.execute
-
 ### oql.shell.api_commands.ApiCommandsMixin
 > Commands that make HTTP calls to the backend API.
 - **Methods**: 2
 - **Key Methods**: oql.shell.api_commands.ApiCommandsMixin.cmd_api, oql.shell.api_commands.ApiCommandsMixin.cmd_create_protocol
+
+### oql.adapters.local.LocalAdapter
+> Execute OQL commands directly via oqlos library.
+- **Methods**: 2
+- **Key Methods**: oql.adapters.local.LocalAdapter.__init__, oql.adapters.local.LocalAdapter.execute
 
 ## Data Transformation Functions
 
@@ -350,11 +350,11 @@ Functions exposed as public API (no underscore prefix):
 - `oql.shell.process_commands.ProcessCommandsMixin.cmd_state_restore` - 4 calls
 - `oql.shell.process_commands.ProcessCommandsMixin.cmd_process_next` - 4 calls
 - `oql.shell.runner.run_command` - 4 calls
-- `oql.shell.ui_commands.UiCommandsMixin.cmd_navigate` - 4 calls
-- `oql.shell.ui_commands.UiCommandsMixin.cmd_input` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_record_stop` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_wait` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_log` - 4 calls
+- `oql.shell.ui_commands.UiCommandsMixin.cmd_navigate` - 4 calls
+- `oql.shell.ui_commands.UiCommandsMixin.cmd_input` - 4 calls
 - `oql.adapters.remote.RemoteAdapter.list_scenarios` - 4 calls
 - `oql.adapters.remote.RemoteAdapter.list_hardware` - 4 calls
 - `oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_select_device` - 3 calls
