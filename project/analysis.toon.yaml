@@ -6,15 +6,15 @@ HEALTH[0]: ok
 REFACTOR[0]: none needed
 
 PIPELINES[54]:
-  [1] Src [get_handler]: get_handler
+  [1] Src [cmd_select_device]: cmd_select_device
       PURITY: 100% pure
-  [2] Src [_cmd_exit]: _cmd_exit
+  [2] Src [cmd_select_interval]: cmd_select_interval
       PURITY: 100% pure
-  [3] Src [_cmd_events]: _cmd_events
+  [3] Src [cmd_start_test]: cmd_start_test
       PURITY: 100% pure
-  [4] Src [_cmd_clear]: _cmd_clear
+  [4] Src [cmd_step_complete]: cmd_step_complete
       PURITY: 100% pure
-  [5] Src [_cmd_connect]: _cmd_connect
+  [5] Src [cmd_protocol_created]: cmd_protocol_created
       PURITY: 100% pure
 
 LAYERS:
@@ -30,8 +30,8 @@ LAYERS:
   │ ui_commands                 36L  1C    3m  CC=1      ←0
   │ remote                      34L  1C    4m  CC=1      ←0
   │ local                       20L  1C    2m  CC=1      ←0
-  │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ event_store                 15L  0C    0m  CC=0.0    ←0
+  │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │ __init__                     0L  0C    0m  CC=0.0    ←0

@@ -1,0 +1,126 @@
+{
+  "project_name": "OQL — Command Line Interface for OqlOS",
+  "description": "OQL CLI — command line interface for OqlOS",
+  "sections": [
+    {
+      "name": "metadata",
+      "type": "metadata",
+      "content": "- **name**: `oql`\n- **version**: `0.1.1`\n- **python_requires**: `>=3.10`\n- **license**: Apache-2.0\n- **ai_model**: `openrouter/qwen/qwen3-coder-next`\n- **ecosystem**: SUMD + DOQL + testql + taskfile\n- **generated_from**: pyproject.toml, Taskfile.yml, testql(2), app.doql.less, app.doql.css, pyqual.yaml, goal.yaml, .env.example, src(1 mod)",
+      "level": 2
+    },
+    {
+      "name": "intent",
+      "type": "intent",
+      "content": "OQL CLI — command line interface for OqlOS",
+      "level": 2
+    },
+    {
+      "name": "architecture",
+      "type": "architecture",
+      "content": "```\nSUMD (description) → DOQL/source (code) → taskfile (automation) → testql (verification)\n```",
+      "level": 2
+    },
+    {
+      "name": "# doql application declaration (`app.doql.less`, `app.doql.css`)",
+      "type": "unknown",
+      "content": "```less\n// LESS format — define @variables here as needed\n\napp {\n  name: \"oql\";\n  version: \"0.1.1\";\n}\n\ninterface[type=\"cli\"] {\n  framework: click;\n}\ninterface[type=\"cli\"] page[name=\"oqlctl\"] {\n\n}\n\nworkflow[name=\"install\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"test\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"lint\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"fmt\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"build\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"clean\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"doql:adopt\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"doql:validate\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"doql:doctor\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"doql:build\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\nworkflow[name=\"help\"] {\n  trigger: \"\"\"\"\"\"\"manual\"\"\"\"\"\"\";\n}\n\ndeploy {\n  target: docker-compose;\n}\n\nenvironment[name=\"local\"] {\n  runtime: docker-compose;\n  env_file: \"\"\"\"\"\"\".env\"\"\"\"\"\"\";\n}\n```\n\n```css\napp {\n  name: \"oql\";\n  version: \"0.1.1\";\n}\n\ninterface[type=\"cli\"] {\n  framework: click;\n}\ninterface[type=\"cli\"] page[name=\"oqlctl\"] {\n\n}\n\nworkflow[name=\"install\"] {\n  trigger: \"manual\";\n  step-1: run cmd=pip install -e .[dev];\n}\n\nworkflow[name=\"test\"] {\n  trigger: \"manual\";\n  step-1: run cmd=pytest -q;\n}\n\nworkflow[name=\"lint\"] {\n  trigger: \"manual\";\n  step-1: run cmd=ruff check .;\n}\n\nworkflow[name=\"fmt\"] {\n  trigger: \"manual\";\n  step-1: run cmd=ruff format .;\n}\n\nworkflow[name=\"build\"] {\n  trigger: \"manual\";\n  step-1: run cmd=python -m build;\n}\n\nworkflow[name=\"clean\"] {\n  trigger: \"manual\";\n  step-1: run cmd=rm -rf build/ dist/ *.egg-info;\n}\n\nworkflow[name=\"doql:adopt\"] {\n  trigger: \"manual\";\n  step-1: run cmd=if ! command -v {{.DOQL_CMD}} >/dev/null 2>&1; then\n  echo \"⚠️  doql not installed. Install: pip install doql\"\n  exit 1\nfi;\n  step-2: run cmd={{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force;\n  step-3: run cmd={{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}};\n  step-4: run cmd=echo \"✅ Project structure captured in {{.DOQL_OUTPUT}}\";\n}\n\nworkflow[name=\"doql:validate\"] {\n  trigger: \"manual\";\n  step-1: run cmd=if [ ! -f \"{{.DOQL_OUTPUT}}\" ]; then\n  echo \"❌ {{.DOQL_OUTPUT}} not found. Run: task doql:adopt\"\n  exit 1\nfi;\n  step-2: run cmd={{.DOQL_CMD}} validate;\n}\n\nworkflow[name=\"doql:doctor\"] {\n  trigger: \"manual\";\n  step-1: run cmd={{.DOQL_CMD}} doctor;\n}\n\nworkflow[name=\"doql:build\"] {\n  trigger: \"manual\";\n  step-1: run cmd=if [ ! -f \"{{.DOQL_OUTPUT}}\" ]; then\n  echo \"❌ {{.DOQL_OUTPUT}} not found. Run: task doql:adopt\"\n  exit 1\nfi;\n  step-2: run cmd=# Regenerate LESS from CSS if CSS exists\nif [ -f \"app.doql.css\" ]; then\n  {{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}}\nfi;\n  step-3: run cmd={{.DOQL_CMD}} build app.doql.css --out build/;\n}\n\nworkflow[name=\"help\"] {\n  trigger: \"manual\";\n  step-1: run cmd=task --list;\n}\n\ndeploy {\n  target: docker-compose;\n}\n\nenvironment[name=\"local\"] {\n  runtime: docker-compose;\n  env_file: \".env\";\n}\n```",
+      "level": 2
+    },
+    {
+      "name": "# source modules",
+      "type": "unknown",
+      "content": "- `oql.cli`",
+      "level": 2
+    },
+    {
+      "name": "interfaces",
+      "type": "interfaces",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# cli entry points",
+      "type": "unknown",
+      "content": "- `oqlctl`",
+      "level": 2
+    },
+    {
+      "name": "# testql scenarios",
+      "type": "unknown",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "## `testql-scenarios/generated-cli-tests.testql.toon.yaml`",
+      "type": "unknown",
+      "content": "```toon\n# SCENARIO: CLI Command Tests\n# TYPE: cli\n# GENERATED: true\n\nCONFIG[2]{key, value}:\n  cli_command, python -moql\n  timeout_ms, 10000\n\nLOG[3]{message}:\n  \"Test CLI help command\"\n  \"Test CLI version command\"\n  \"Test CLI main workflow\"\n```",
+      "level": 2
+    },
+    {
+      "name": "## `testql-scenarios/generated-from-pytests.testql.toon.yaml`",
+      "type": "unknown",
+      "content": "```toon\n# SCENARIO: Auto-generated from Python Tests\n# TYPE: integration\n# GENERATED: true\n\nLOG[4]{message}:\n  \"Test: TestCli_test_cmd_subcommand_invokes_helper\"\n  \"Test: test_cmd_subcommand_invokes_helper\"\n  \"Test: TestCli_test_cmd_subcommand_invokes_helper\"\n  \"Test: test_cmd_subcommand_invokes_helper\"\n```",
+      "level": 2
+    },
+    {
+      "name": "workflows",
+      "type": "workflows",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# taskfile tasks (`taskfile.yml`)",
+      "type": "unknown",
+      "content": "```yaml\ntasks:\n  install:\n    desc: \"Install Python dependencies (editable)\"\n    cmds:\n      - pip install -e .[dev]\n  quality:\n    desc: \"Run pyqual quality pipeline\"\n    cmds:\n      - pyqual run\n  quality:fix:\n    desc: \"Run pyqual with auto-fix\"\n    cmds:\n      - pyqual run --fix\n  quality:report:\n    desc: \"Generate pyqual quality report\"\n    cmds:\n      - pyqual report\n  test:\n    desc: \"Run pytest suite\"\n    cmds:\n      - pytest -q\n  lint:\n    desc: \"Run ruff lint check\"\n    cmds:\n      - ruff check .\n  fmt:\n    desc: \"Auto-format with ruff\"\n    cmds:\n      - ruff format .\n  build:\n    desc: \"Build wheel + sdist\"\n    cmds:\n      - python -m build\n  clean:\n    desc: \"Remove build artefacts\"\n    cmds:\n      - rm -rf build/ dist/ *.egg-info\n  all:\n    desc: \"Run install, quality check\"\n  doql:adopt:\n    desc: \"Reverse-engineer oql project structure\"\n    cmds:\n      - if ! command -v {{.DOQL_CMD}} >/dev/null 2>&1; then\n  echo \"⚠️  doql not installed. Install: pip install doql\"\n  exit 1\nfi\n  doql:validate:\n    desc: \"Validate app.doql.less syntax\"\n    cmds:\n      - if [ ! -f \"{{.DOQL_OUTPUT}}\" ]; then\n  echo \"❌ {{.DOQL_OUTPUT}} not found. Run: task doql:adopt\"\n  exit 1\nfi\n  doql:doctor:\n    desc: \"Run doql health checks\"\n    cmds:\n      - {{.DOQL_CMD}} doctor\n  doql:build:\n    desc: \"Generate code from app.doql.less\"\n    cmds:\n      - if [ ! -f \"{{.DOQL_OUTPUT}}\" ]; then\n  echo \"❌ {{.DOQL_OUTPUT}} not found. Run: task doql:adopt\"\n  exit 1\nfi\n  analyze:\n    desc: \"Full doql analysis (adopt + validate + doctor)\"\n  help:\n    desc: \"Show available tasks\"\n    cmds:\n      - task --list\n```",
+      "level": 2
+    },
+    {
+      "name": "quality pipeline (`pyqual.yaml`)",
+      "type": "unknown",
+      "content": "```yaml\npipeline:\n  name: oql-quality\n\n  metrics:\n    cc_max: 15\n    vallm_pass_min: 65   # current: 68.8%\n    # coverage disabled - pytest_cov reports null\n\n  stages:\n    - name: analyze\n      tool: code2llm-filtered\n\n    - name: validate\n      tool: vallm-filtered\n\n    - name: prefact\n      tool: prefact\n      optional: true\n      when: any_stage_fail\n      timeout: 900\n\n    - name: fix\n      tool: llx-fix\n      optional: true\n      when: any_stage_fail\n      timeout: 1800\n\n    - name: security\n      tool: bandit\n      optional: true\n      timeout: 120\n\n    - name: test\n      tool: pytest\n      timeout: 600\n\n    - name: push\n      tool: git-push\n      optional: true\n      timeout: 120\n\n  loop:\n    max_iterations: 3\n    on_fail: report\n    ticket_backends:\n      - markdown\n\n  env:\n    LLM_MODEL: openrouter/qwen/qwen3-coder-next\n```",
+      "level": 2
+    },
+    {
+      "name": "configuration",
+      "type": "configuration",
+      "content": "```yaml\nproject:\n  name: oql\n  version: 0.1.1\n  env: local\n```",
+      "level": 2
+    },
+    {
+      "name": "dependencies",
+      "type": "dependencies",
+      "content": "",
+      "level": 2
+    },
+    {
+      "name": "# runtime",
+      "type": "unknown",
+      "content": "- `click>=8.0`\n- `rich>=13.0`\n- `httpx>=0.27`\n- `oqlos>=0.1.0`\n- `goal>=2.1.0`\n- `costs>=0.1.20`\n- `pfix>=0.1.60`\n- `testql>=0.2.0`",
+      "level": 2
+    },
+    {
+      "name": "# development",
+      "type": "unknown",
+      "content": "- `pytest`\n- `goal>=2.1.0`\n- `costs>=0.1.20`\n- `pfix>=0.1.60`",
+      "level": 2
+    },
+    {
+      "name": "deployment",
+      "type": "deployment",
+      "content": "```bash\npip install oql\n\n# development install\npip install -e .[dev]\n```",
+      "level": 2
+    },
+    {
+      "name": "environment variables (`.env.example`)",
+      "type": "unknown",
+      "content": "| Variable | Default | Description |\n|----------|---------|-------------|\n| `OPENROUTER_API_KEY` | `*(not set)*` | Required: OpenRouter API key (https://openrouter.ai/keys) |\n| `LLM_MODEL` | `openrouter/qwen/qwen3-coder-next` | Model (default: openrouter/qwen/qwen3-coder-next) |\n| `PFIX_AUTO_APPLY` | `true` | true = apply fixes without asking |\n| `PFIX_AUTO_INSTALL_DEPS` | `true` | true = auto pip/uv install |\n| `PFIX_AUTO_RESTART` | `false` | true = os.execv restart after fix |\n| `PFIX_MAX_RETRIES` | `3` |  |\n| `PFIX_DRY_RUN` | `false` |  |\n| `PFIX_ENABLED` | `true` |  |\n| `PFIX_GIT_COMMIT` | `false` | true = auto-commit fixes |\n| `PFIX_GIT_PREFIX` | `pfix:` | commit message prefix |\n| `PFIX_CREATE_BACKUPS` | `false` | false = disable .pfix_backups/ directory |",
+      "level": 2
+    },
+    {
+      "name": "release management (`goal.yaml`)",
+      "type": "unknown",
+      "content": "- **versioning**: `semver`\n- **commits**: `conventional` scope=`oql`\n- **changelog**: `keep-a-changelog`\n- **build strategies**: `python`, `nodejs`, `rust`\n- **version files**: `pyproject.toml:version`, `oql/__init__.py:__version__`",
+      "level": 2
+    }
+  ]
+}

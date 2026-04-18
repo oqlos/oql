@@ -13,14 +13,14 @@
 
 ## Architecture by Module
 
+### oql.cli
+- **Functions**: 11
+- **File**: `cli.py`
+
 ### oql.shell.commands
 - **Functions**: 11
 - **Classes**: 1
 - **File**: `commands.py`
-
-### oql.cli
-- **Functions**: 11
-- **File**: `cli.py`
 
 ### oql.shell.executor
 - **Functions**: 8
@@ -56,15 +56,15 @@
 - **Classes**: 1
 - **File**: `ui_commands.py`
 
-### oql.shell.api_commands
-- **Functions**: 2
-- **Classes**: 1
-- **File**: `api_commands.py`
-
 ### oql.adapters.local
 - **Functions**: 2
 - **Classes**: 1
 - **File**: `local.py`
+
+### oql.shell.api_commands
+- **Functions**: 2
+- **Classes**: 1
+- **File**: `api_commands.py`
 
 ## Key Entry Points
 
@@ -92,15 +92,15 @@ Main execution flows into the system:
 Pipeline: data.json → raport.html
 - **Calls**: main.command, click.argument, click.option, None.read_text, render_html_report, None.write_text, click.echo, click.echo
 
+### oql.cli.scenarios
+> List available scenarios.
+- **Calls**: main.command, click.option, httpx.get, resp.raise_for_status, None.get, click.echo, click.echo, sys.exit
+
 ### oql.shell.commands._cmd_run
 - **Calls**: args.strip, None.startswith, os.path.isfile, print, print, print, print, script_path.upper
 
 ### oql.shell.runner.main
 - **Calls**: len, asyncio.run, asyncio.run, os.path.isfile, oql.shell.runner.run_shell, len, oql.shell.runner.run_command, asyncio.run
-
-### oql.cli.scenarios
-> List available scenarios.
-- **Calls**: main.command, click.option, httpx.get, resp.raise_for_status, None.get, click.echo, click.echo, sys.exit
 
 ### oql.shell.executor.DslExecutor._parse_target_and_json
 > Parse 'target' {...} format
@@ -118,12 +118,12 @@ Pipeline: data.json → raport.html
 > List connected hardware peripherals.
 - **Calls**: main.command, click.option, httpx.get, resp.raise_for_status, print, json.dumps, click.echo, sys.exit
 
-### oql.shell.commands._cmd_scripts
-- **Calls**: examples_dir.exists, print, sorted, examples_dir.glob, print, Path, f.relative_to, Path
-
 ### oql.cli.shell_cmd
 > Start interactive OQL shell.
 - **Calls**: main.command, click.echo, LocalAdapter, adapter.execute, None.strip, line.lower, click.echo, input
+
+### oql.shell.commands._cmd_scripts
+- **Calls**: examples_dir.exists, print, sorted, examples_dir.glob, print, Path, f.relative_to, Path
 
 ### oql.shell.executor.DslExecutor.emit_event
 > Emit event (store + broadcast)
@@ -165,6 +165,14 @@ Pipeline: data.json → raport.html
 > PROCESS_NEXT {...} 
 - **Calls**: print, self.emit_event, args.strip, json.loads
 
+### oql.shell.ui_commands.UiCommandsMixin.cmd_navigate
+> NAVIGATE "/route" 
+- **Calls**: None.strip, print, self.emit_event, args.strip
+
+### oql.shell.ui_commands.UiCommandsMixin.cmd_input
+> INPUT "#selector" {"value": "..."} 
+- **Calls**: self._parse_target_and_json, print, self.emit_event, None.get
+
 ### oql.shell.session_commands.SessionCommandsMixin.cmd_record_stop
 > RECORD_STOP 
 - **Calls**: print, self.emit_event, len, len
@@ -176,14 +184,6 @@ Pipeline: data.json → raport.html
 ### oql.shell.session_commands.SessionCommandsMixin.cmd_log
 > LOG "message" {...} 
 - **Calls**: self._parse_target_and_json, None.get, print, icons.get
-
-### oql.shell.ui_commands.UiCommandsMixin.cmd_navigate
-> NAVIGATE "/route" 
-- **Calls**: None.strip, print, self.emit_event, args.strip
-
-### oql.shell.ui_commands.UiCommandsMixin.cmd_input
-> INPUT "#selector" {"value": "..."} 
-- **Calls**: self._parse_target_and_json, print, self.emit_event, None.get
 
 ### oql.adapters.remote.RemoteAdapter.list_scenarios
 - **Calls**: httpx.get, resp.raise_for_status, None.get, resp.json
@@ -217,20 +217,20 @@ cmd_api [oql.shell.api_commands.ApiCommandsMixin]
 report [oql.cli]
 ```
 
-### Flow 6: _cmd_run
+### Flow 6: scenarios
+```
+scenarios [oql.cli]
+```
+
+### Flow 7: _cmd_run
 ```
 _cmd_run [oql.shell.commands]
 ```
 
-### Flow 7: main
+### Flow 8: main
 ```
 main [oql.shell.runner]
   └─> run_shell
-```
-
-### Flow 8: scenarios
-```
-scenarios [oql.cli]
 ```
 
 ### Flow 9: _parse_target_and_json
@@ -281,15 +281,15 @@ execute [oql.shell.executor.DslExecutor]
 - **Methods**: 3
 - **Key Methods**: oql.shell.ui_commands.UiCommandsMixin.cmd_navigate, oql.shell.ui_commands.UiCommandsMixin.cmd_click, oql.shell.ui_commands.UiCommandsMixin.cmd_input
 
-### oql.shell.api_commands.ApiCommandsMixin
-> Commands that make HTTP calls to the backend API.
-- **Methods**: 2
-- **Key Methods**: oql.shell.api_commands.ApiCommandsMixin.cmd_api, oql.shell.api_commands.ApiCommandsMixin.cmd_create_protocol
-
 ### oql.adapters.local.LocalAdapter
 > Execute OQL commands directly via oqlos library.
 - **Methods**: 2
 - **Key Methods**: oql.adapters.local.LocalAdapter.__init__, oql.adapters.local.LocalAdapter.execute
+
+### oql.shell.api_commands.ApiCommandsMixin
+> Commands that make HTTP calls to the backend API.
+- **Methods**: 2
+- **Key Methods**: oql.shell.api_commands.ApiCommandsMixin.cmd_api, oql.shell.api_commands.ApiCommandsMixin.cmd_create_protocol
 
 ## Data Transformation Functions
 
@@ -331,14 +331,14 @@ Functions exposed as public API (no underscore prefix):
 - `oql.cli.run` - 22 calls
 - `oql.shell.api_commands.ApiCommandsMixin.cmd_api` - 21 calls
 - `oql.cli.report` - 12 calls
-- `oql.shell.runner.main` - 11 calls
 - `oql.cli.scenarios` - 11 calls
+- `oql.shell.runner.main` - 11 calls
 - `oql.shell.runner.run_shell` - 10 calls
 - `oql.shell.executor.DslExecutor.execute` - 10 calls
 - `oql.cli.validate` - 9 calls
 - `oql.cli.hardware` - 9 calls
-- `oql.shell.runner.run_script` - 8 calls
 - `oql.cli.shell_cmd` - 8 calls
+- `oql.shell.runner.run_script` - 8 calls
 - `oql.shell.executor.DslExecutor.emit_event` - 8 calls
 - `oql.cli.cmd` - 7 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_record_start` - 6 calls
@@ -350,11 +350,11 @@ Functions exposed as public API (no underscore prefix):
 - `oql.shell.process_commands.ProcessCommandsMixin.cmd_state_restore` - 4 calls
 - `oql.shell.process_commands.ProcessCommandsMixin.cmd_process_next` - 4 calls
 - `oql.shell.runner.run_command` - 4 calls
+- `oql.shell.ui_commands.UiCommandsMixin.cmd_navigate` - 4 calls
+- `oql.shell.ui_commands.UiCommandsMixin.cmd_input` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_record_stop` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_wait` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_log` - 4 calls
-- `oql.shell.ui_commands.UiCommandsMixin.cmd_navigate` - 4 calls
-- `oql.shell.ui_commands.UiCommandsMixin.cmd_input` - 4 calls
 - `oql.adapters.remote.RemoteAdapter.list_scenarios` - 4 calls
 - `oql.adapters.remote.RemoteAdapter.list_hardware` - 4 calls
 - `oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_select_device` - 3 calls
@@ -393,6 +393,10 @@ graph TD
     report --> option
     report --> read_text
     report --> render_html_report
+    scenarios --> command
+    scenarios --> option
+    scenarios --> get
+    scenarios --> raise_for_status
     _cmd_run --> strip
     _cmd_run --> startswith
     _cmd_run --> isfile
@@ -400,10 +404,6 @@ graph TD
     main --> len
     main --> run
     main --> isfile
-    main --> run_shell
-    scenarios --> command
-    scenarios --> option
-    scenarios --> get
 ```
 
 ## Reverse Engineering Guidelines
