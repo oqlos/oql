@@ -20,20 +20,67 @@ workflow[name="test"] {
   step-1: run cmd=pytest -q;
 }
 
+workflow[name="lint"] {
+  trigger: "manual";
+  step-1: run cmd=ruff check .;
+}
+
+workflow[name="fmt"] {
+  trigger: "manual";
+  step-1: run cmd=ruff format .;
+}
+
 workflow[name="build"] {
   trigger: "manual";
   step-1: run cmd=python -m build;
 }
 
-workflow[name="health"] {
-  trigger: "manual";
-  step-1: run cmd=docker compose ps;
-  step-2: run cmd=docker compose exec app echo "Health check passed";
-}
-
 workflow[name="clean"] {
   trigger: "manual";
   step-1: run cmd=rm -rf build/ dist/ *.egg-info;
+}
+
+workflow[name="doql:adopt"] {
+  trigger: "manual";
+  step-1: run cmd=if ! command -v {{.DOQL_CMD}} >/dev/null 2>&1; then
+  echo "⚠️  doql not installed. Install: pip install doql"
+  exit 1
+fi;
+  step-2: run cmd={{.DOQL_CMD}} adopt {{.PWD}} --output app.doql.css --force;
+  step-3: run cmd={{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}};
+  step-4: run cmd=echo "✅ Project structure captured in {{.DOQL_OUTPUT}}";
+}
+
+workflow[name="doql:validate"] {
+  trigger: "manual";
+  step-1: run cmd=if [ ! -f "{{.DOQL_OUTPUT}}" ]; then
+  echo "❌ {{.DOQL_OUTPUT}} not found. Run: task doql:adopt"
+  exit 1
+fi;
+  step-2: run cmd={{.DOQL_CMD}} validate;
+}
+
+workflow[name="doql:doctor"] {
+  trigger: "manual";
+  step-1: run cmd={{.DOQL_CMD}} doctor {{.PWD}};
+}
+
+workflow[name="doql:build"] {
+  trigger: "manual";
+  step-1: run cmd=if [ ! -f "{{.DOQL_OUTPUT}}" ]; then
+  echo "❌ {{.DOQL_OUTPUT}} not found. Run: task doql:adopt"
+  exit 1
+fi;
+  step-2: run cmd=# Regenerate LESS from CSS if CSS exists
+if [ -f "app.doql.css" ]; then
+  {{.DOQL_CMD}} export --format less -o {{.DOQL_OUTPUT}}
+fi;
+  step-3: run cmd={{.DOQL_CMD}} build app.doql.css --out build/;
+}
+
+workflow[name="help"] {
+  trigger: "manual";
+  step-1: run cmd=task --list;
 }
 
 deploy {
@@ -43,26 +90,4 @@ deploy {
 environment[name="local"] {
   runtime: docker-compose;
   env_file: ".env";
-}
-
-workflow[name="all"] {
-  trigger: "manual";
-  step-1: run cmd=taskfile run install;
-  step-2: run cmd=taskfile run lint;
-  step-3: run cmd=taskfile run test;
-}
-
-workflow[name="help"] {
-  trigger: "manual";
-  step-1: run cmd=taskfile list;
-}
-
-workflow[name="lint"] {
-  trigger: "manual";
-  step-1: run cmd=ruff check .;
-}
-
-workflow[name="fmt"] {
-  trigger: "manual";
-  step-1: run cmd=ruff format .;
 }
