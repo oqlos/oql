@@ -1,0 +1,66 @@
+// LESS format — define @variables here as needed
+
+app {
+  name: "oql";
+  version: "0.1.1";
+}
+
+interface[type="cli"] {
+  framework: click;
+}
+interface[type="cli"] page[name="oqlctl"] {
+
+}
+
+workflow[name="install"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="test"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="lint"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="fmt"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="build"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="clean"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="doql:adopt"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="doql:validate"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="doql:doctor"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="doql:build"] {
+  trigger: """""""manual""""""";
+}
+
+workflow[name="help"] {
+  trigger: """""""manual""""""";
+}
+
+deploy {
+  target: docker-compose;
+}
+
+environment[name="local"] {
+  runtime: docker-compose;
+  env_file: """"""".env""""""";
+}

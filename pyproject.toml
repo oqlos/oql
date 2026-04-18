@@ -17,6 +17,7 @@ dependencies = [
     "goal>=2.1.0",
     "costs>=0.1.20",
     "pfix>=0.1.60",
+    "testql>=0.2.0",
 ]
 
 [project.scripts]
