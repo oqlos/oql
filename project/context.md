@@ -96,11 +96,11 @@ Pipeline: data.json → raport.html
 > List available scenarios.
 - **Calls**: main.command, click.option, httpx.get, resp.raise_for_status, None.get, click.echo, click.echo, sys.exit
 
-### oql.shell.commands._cmd_run
-- **Calls**: args.strip, None.startswith, os.path.isfile, print, print, print, print, script_path.upper
-
 ### oql.shell.runner.main
 - **Calls**: len, asyncio.run, asyncio.run, os.path.isfile, oql.shell.runner.run_shell, len, oql.shell.runner.run_command, asyncio.run
+
+### oql.shell.commands._cmd_run
+- **Calls**: args.strip, None.startswith, os.path.isfile, print, print, print, print, script_path.upper
 
 ### oql.shell.executor.DslExecutor._parse_target_and_json
 > Parse 'target' {...} format
@@ -165,6 +165,14 @@ Pipeline: data.json → raport.html
 > PROCESS_NEXT {...} 
 - **Calls**: print, self.emit_event, args.strip, json.loads
 
+### oql.shell.ui_commands.UiCommandsMixin.cmd_navigate
+> NAVIGATE "/route" 
+- **Calls**: None.strip, print, self.emit_event, args.strip
+
+### oql.shell.ui_commands.UiCommandsMixin.cmd_input
+> INPUT "#selector" {"value": "..."} 
+- **Calls**: self._parse_target_and_json, print, self.emit_event, None.get
+
 ### oql.shell.session_commands.SessionCommandsMixin.cmd_record_stop
 > RECORD_STOP 
 - **Calls**: print, self.emit_event, len, len
@@ -176,14 +184,6 @@ Pipeline: data.json → raport.html
 ### oql.shell.session_commands.SessionCommandsMixin.cmd_log
 > LOG "message" {...} 
 - **Calls**: self._parse_target_and_json, None.get, print, icons.get
-
-### oql.shell.ui_commands.UiCommandsMixin.cmd_navigate
-> NAVIGATE "/route" 
-- **Calls**: None.strip, print, self.emit_event, args.strip
-
-### oql.shell.ui_commands.UiCommandsMixin.cmd_input
-> INPUT "#selector" {"value": "..."} 
-- **Calls**: self._parse_target_and_json, print, self.emit_event, None.get
 
 ### oql.adapters.remote.RemoteAdapter.list_scenarios
 - **Calls**: httpx.get, resp.raise_for_status, None.get, resp.json
@@ -222,15 +222,15 @@ report [oql.cli]
 scenarios [oql.cli]
 ```
 
-### Flow 7: _cmd_run
-```
-_cmd_run [oql.shell.commands]
-```
-
-### Flow 8: main
+### Flow 7: main
 ```
 main [oql.shell.runner]
   └─> run_shell
+```
+
+### Flow 8: _cmd_run
+```
+_cmd_run [oql.shell.commands]
 ```
 
 ### Flow 9: _parse_target_and_json
@@ -350,11 +350,11 @@ Functions exposed as public API (no underscore prefix):
 - `oql.shell.process_commands.ProcessCommandsMixin.cmd_state_restore` - 4 calls
 - `oql.shell.process_commands.ProcessCommandsMixin.cmd_process_next` - 4 calls
 - `oql.shell.runner.run_command` - 4 calls
+- `oql.shell.ui_commands.UiCommandsMixin.cmd_navigate` - 4 calls
+- `oql.shell.ui_commands.UiCommandsMixin.cmd_input` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_record_stop` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_wait` - 4 calls
 - `oql.shell.session_commands.SessionCommandsMixin.cmd_log` - 4 calls
-- `oql.shell.ui_commands.UiCommandsMixin.cmd_navigate` - 4 calls
-- `oql.shell.ui_commands.UiCommandsMixin.cmd_input` - 4 calls
 - `oql.adapters.remote.RemoteAdapter.list_scenarios` - 4 calls
 - `oql.adapters.remote.RemoteAdapter.list_hardware` - 4 calls
 - `oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_select_device` - 3 calls
@@ -397,13 +397,13 @@ graph TD
     scenarios --> option
     scenarios --> get
     scenarios --> raise_for_status
-    _cmd_run --> strip
-    _cmd_run --> startswith
-    _cmd_run --> isfile
-    _cmd_run --> print
     main --> len
     main --> run
     main --> isfile
+    main --> run_shell
+    _cmd_run --> strip
+    _cmd_run --> startswith
+    _cmd_run --> isfile
 ```
 
 ## Reverse Engineering Guidelines

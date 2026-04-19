@@ -1,0 +1,129 @@
+project: /home/tom/github/oqlos/oql
+generated_from: code2llm call graph analysis
+stats:
+  total_nodes: 6
+  total_edges: 4
+  modules_count: 2
+nodes:
+  oql.cli._execute_single_command:
+    name: _execute_single_command
+    module: oql.cli
+    line: 33
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  oql.shell.runner.run_shell:
+    name: run_shell
+    module: oql.shell.runner
+    line: 14
+    cyclomatic_complexity: 8
+    calls_out: 10
+    calls_in: 1
+  oql.shell.runner.main:
+    name: main
+    module: oql.shell.runner
+    line: 74
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 0
+  oql.shell.runner.run_command:
+    name: run_command
+    module: oql.shell.runner
+    line: 66
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  oql.cli.cmd:
+    name: cmd
+    module: oql.cli
+    line: 120
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 0
+  oql.cli._build_single_command_scenario:
+    name: _build_single_command_scenario
+    module: oql.cli
+    line: 18
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+edges:
+- caller: oql.cli._execute_single_command
+  callee: oql.cli._build_single_command_scenario
+  call_type: resolved
+- caller: oql.cli.cmd
+  callee: oql.cli._execute_single_command
+  call_type: resolved
+- caller: oql.shell.runner.main
+  callee: oql.shell.runner.run_shell
+  call_type: resolved
+- caller: oql.shell.runner.main
+  callee: oql.shell.runner.run_command
+  call_type: resolved
+modules:
+  oql.cli:
+  - oql.cli._build_single_command_scenario
+  - oql.cli._execute_single_command
+  - oql.cli.cmd
+  oql.shell.runner:
+  - oql.shell.runner.main
+  - oql.shell.runner.run_command
+  - oql.shell.runner.run_shell
+entry_points:
+- oql.adapters.local.LocalAdapter.__init__
+- oql.adapters.local.LocalAdapter.execute
+- oql.adapters.remote.RemoteAdapter.__init__
+- oql.adapters.remote.RemoteAdapter.execute
+- oql.adapters.remote.RemoteAdapter.list_hardware
+- oql.adapters.remote.RemoteAdapter.list_scenarios
+- oql.cli.cmd
+- oql.cli.hardware
+- oql.cli.main
+- oql.cli.report
+- oql.cli.run
+- oql.cli.scenarios
+- oql.cli.shell_cmd
+- oql.cli.validate
+- oql.shell.api_commands.ApiCommandsMixin.cmd_api
+- oql.shell.api_commands.ApiCommandsMixin.cmd_create_protocol
+- oql.shell.commands.ShellCommandRegistry.__init__
+- oql.shell.commands.ShellCommandRegistry.get_handler
+- oql.shell.commands.ShellCommandRegistry.register
+- oql.shell.commands._cmd_clear
+- oql.shell.commands._cmd_connect
+- oql.shell.commands._cmd_disconnect
+- oql.shell.commands._cmd_events
+- oql.shell.commands._cmd_exit
+- oql.shell.commands._cmd_list
+- oql.shell.commands._cmd_run
+- oql.shell.commands._cmd_scripts
+- oql.shell.executor.DslExecutor.__init__
+- oql.shell.executor.DslExecutor._generate_id
+- oql.shell.executor.DslExecutor._parse_target_and_json
+- oql.shell.executor.DslExecutor.connect_websocket
+- oql.shell.executor.DslExecutor.disconnect_websocket
+- oql.shell.executor.DslExecutor.emit_event
+- oql.shell.executor.DslExecutor.execute
+- oql.shell.executor.DslExecutor.execute_script
+- oql.shell.process_commands.ProcessCommandsMixin.cmd_emit
+- oql.shell.process_commands.ProcessCommandsMixin.cmd_layout
+- oql.shell.process_commands.ProcessCommandsMixin.cmd_process_next
+- oql.shell.process_commands.ProcessCommandsMixin.cmd_process_start
+- oql.shell.process_commands.ProcessCommandsMixin.cmd_render
+- oql.shell.process_commands.ProcessCommandsMixin.cmd_state_restore
+- oql.shell.process_commands.ProcessCommandsMixin.cmd_state_save
+- oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_protocol_created
+- oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_protocol_finalize
+- oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_select_device
+- oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_select_interval
+- oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_start_test
+- oql.shell.protocol_commands.ProtocolCommandsMixin.cmd_step_complete
+- oql.shell.runner.main
+- oql.shell.session_commands.SessionCommandsMixin.cmd_help
+- oql.shell.session_commands.SessionCommandsMixin.cmd_log
+- oql.shell.session_commands.SessionCommandsMixin.cmd_record_start
+- oql.shell.session_commands.SessionCommandsMixin.cmd_record_stop
+- oql.shell.session_commands.SessionCommandsMixin.cmd_wait
+- oql.shell.ui_commands.UiCommandsMixin.cmd_click
+- oql.shell.ui_commands.UiCommandsMixin.cmd_input
+- oql.shell.ui_commands.UiCommandsMixin.cmd_navigate

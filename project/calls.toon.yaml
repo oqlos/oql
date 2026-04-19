@@ -1,0 +1,33 @@
+# code2llm call graph | /home/tom/github/oqlos/oql
+# nodes: 6 | edges: 4 | modules: 2
+# CC̄=2.4
+
+HUBS[20]:
+  oql.shell.runner.run_shell
+    CC=8  in:1  out:10  total:11
+  oql.shell.runner.main
+    CC=5  in:0  out:11  total:11
+  oql.cli.cmd
+    CC=1  in:0  out:7  total:7
+  oql.shell.runner.run_command
+    CC=1  in:1  out:4  total:5
+  oql.cli._execute_single_command
+    CC=2  in:1  out:3  total:4
+  oql.cli._build_single_command_scenario
+    CC=2  in:1  out:3  total:4
+
+MODULES:
+  oql.cli  [3 funcs]
+    _build_single_command_scenario  CC=2  out:3
+    _execute_single_command  CC=2  out:3
+    cmd  CC=1  out:7
+  oql.shell.runner  [3 funcs]
+    main  CC=5  out:11
+    run_command  CC=1  out:4
+    run_shell  CC=8  out:10
+
+EDGES:
+  oql.cli._execute_single_command → oql.cli._build_single_command_scenario
+  oql.cli.cmd → oql.cli._execute_single_command
+  oql.shell.runner.main → oql.shell.runner.run_shell
+  oql.shell.runner.main → oql.shell.runner.run_command

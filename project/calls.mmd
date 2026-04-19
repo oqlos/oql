@@ -1,0 +1,15 @@
+flowchart LR
+    subgraph oql__cli
+        oql__cli___execute_single_command["_execute_single_command"]
+        oql__cli__cmd["cmd"]
+        oql__cli___build_single_command_scenario["_build_single_command_scenario"]
+    end
+    subgraph oql__shell
+        oql__shell__runner__run_shell["run_shell"]
+        oql__shell__runner__main["main"]
+        oql__shell__runner__run_command["run_command"]
+    end
+    oql__cli___execute_single_command --> oql__cli___build_single_command_scenario
+    oql__cli__cmd --> oql__cli___execute_single_command
+    oql__shell__runner__main --> oql__shell__runner__run_shell
+    oql__shell__runner__main --> oql__shell__runner__run_command

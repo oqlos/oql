@@ -1,0 +1,39 @@
+flowchart TD
+
+    %% Entry points (blue)
+    classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
+
+    subgraph CLI
+        oql__cli__main["main"]
+        oql__cli___build_single_command_scenario["_build_single_command_scenario"]
+        oql__cli___execute_single_command["_execute_single_command"]
+        oql__cli__run["run"]
+        oql__cli___generate_report["_generate_report"]
+        oql__cli__report["report"]
+        oql__cli__validate["validate"]
+        oql__cli__cmd["cmd"]
+        oql__cli__hardware["hardware"]
+        oql__cli__scenarios["scenarios"]
+        oql__cli__shell_cmd["shell_cmd"]
+    end
+
+    subgraph Core
+        oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_select_device["cmd_select_device"]
+        oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_select_interval["cmd_select_interval"]
+        oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_start_test["cmd_start_test"]
+        oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_step_complete["cmd_step_complete"]
+        oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_protocol_created["cmd_protocol_created"]
+        oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_protocol_finalize["cmd_protocol_finalize"]
+        oql__shell__process_commands__ProcessCommandsMixin__cmd_emit["cmd_emit"]
+        oql__shell__process_commands__ProcessCommandsMixin__cmd_render["cmd_render"]
+        oql__shell__process_commands__ProcessCommandsMixin__cmd_layout["cmd_layout"]
+        oql__shell__process_commands__ProcessCommandsMixin__cmd_state_save["cmd_state_save"]
+        oql__shell__process_commands__ProcessCommandsMixin__cmd_state_restore["cmd_state_restore"]
+        oql__shell__process_commands__ProcessCommandsMixin__cmd_process_start["cmd_process_start"]
+        oql__shell__process_commands__ProcessCommandsMixin__cmd_process_next["cmd_process_next"]
+        oql__shell__runner__main["main"]
+        oql__shell__commands__ShellCommandRegistry__register["register"]
+        ...["+30 more"]
+    end
+
+    class oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_select_device,oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_select_interval,oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_start_test,oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_step_complete,oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_protocol_created,oql__shell__protocol_commands__ProtocolCommandsMixin__cmd_protocol_finalize,oql__shell__process_commands__ProcessCommandsMixin__cmd_emit,oql__shell__process_commands__ProcessCommandsMixin__cmd_render,oql__shell__process_commands__ProcessCommandsMixin__cmd_layout,oql__shell__process_commands__ProcessCommandsMixin__cmd_state_save entry

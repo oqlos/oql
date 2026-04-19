@@ -1,0 +1,43 @@
+# oql | 63 func | 11f | 1141L | python | 2026-04-19
+
+HEALTH:
+  CC̄=2.4  critical=2 (limit:10)  dup=0  cycles=0
+
+ALERTS[5]:
+  !!  high_fan_out     ApiCommandsMixin.cmd_api = 16 (limit:10)
+  !!  high_fan_out     ApiCommandsMixin.cmd_create_protocol = 16 (limit:10)
+  !   high_fan_out     run = 13 (limit:10)
+  !   high_fan_out     _cmd_list = 12 (limit:10)
+  !   high_fan_out     DslExecutor.execute = 10 (limit:10)
+
+MODULES[18] (top by size):
+  M[oql/cli.py] 179L C:0 F:11 CC↑5 D:0 (python)
+  M[oql/shell/executor.py] 176L C:1 F:8 CC↑9 D:0 (python)
+  M[oql/shell/commands.py] 138L C:1 F:11 CC↑11 D:0 (python)
+  M[oql/shell/api_commands.py] 116L C:1 F:2 CC↑11 D:0 (python)
+  M[oql/shell/session_commands.py] 102L C:1 F:5 CC↑2 D:0 (python)
+  M[oql/shell/runner.py] 84L C:0 F:4 CC↑8 D:0 (python)
+  M[oql/shell/protocol_commands.py] 71L C:1 F:6 CC↑3 D:0 (python)
+  M[oql/shell/process_commands.py] 68L C:1 F:7 CC↑3 D:0 (python)
+  M[oql/shell/ui_commands.py] 36L C:1 F:3 CC↑1 D:0 (python)
+  M[project.sh] 35L C:0 F:0 CC↑0 D:0 (shell)
+  M[oql/adapters/remote.py] 34L C:1 F:4 CC↑1 D:0 (python)
+  M[oql/adapters/local.py] 20L C:1 F:2 CC↑1 D:0 (python)
+  M[oql/core/event_store.py] 15L C:0 F:0 CC↑0 D:0 (python)
+  M[oql/shell/__init__.py] 15L C:0 F:0 CC↑0 D:0 (python)
+  M[oql/__init__.py] 3L C:0 F:0 CC↑0 D:0 (python)
+  LANGS: python:16/shell:2
+
+HOTSPOTS[5]:
+  ★ ApiCommandsMixin.cmd_api fan=16  // API GET|POST|PUT|DELETE "url" {...} 
+  ★ ApiCommandsMixin.cmd_create_protocol fan=16  // CREATE_PROTOCOL "name" {...} - Create protocol via API
+  ★ run fan=13  // Run an OQL scenario file.
+  ★ _cmd_list fan=12  // List peripherals - filter by pattern like 'pompa*' or 'pump*'
+  ★ DslExecutor.execute fan=10  // Execute a single DSL command via registry dispatch.
+
+REFACTOR[2]:
+  [1] M/M Reduce ApiCommandsMixin.cmd_api fan-out (currently 16)
+  [2] M/M Reduce ApiCommandsMixin.cmd_create_protocol fan-out (currently 16)
+
+EVOLUTION:
+  2026-04-19 CC̄=2.4 crit=2 1141L // Automated analysis

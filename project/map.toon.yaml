@@ -1,0 +1,91 @@
+# oql | 21f 1379L | python:17,shell:2,css:1,less:1 | 2026-04-19
+# stats: 23 func | 10 cls | 21 mod | CC̄=2.8 | critical:1 | cycles:0
+# alerts[5]: CC _cmd_list=10; CC run_shell=8; CC shell_cmd=5; CC _cmd_run=5; CC main=5
+# hotspots[5]: run fan=12; hardware fan=9; report fan=8; _cmd_run fan=8; _cmd_list fan=8
+# evolution: baseline
+# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
+M[21]:
+  app.doql.css,109
+  app.doql.less,111
+  oql/__init__.py,4
+  oql/adapters/__init__.py,1
+  oql/adapters/local.py,21
+  oql/adapters/remote.py,35
+  oql/cli.py,180
+  oql/core/__init__.py,1
+  oql/core/event_store.py,16
+  oql/shell/__init__.py,16
+  oql/shell/api_commands.py,117
+  oql/shell/commands.py,139
+  oql/shell/executor.py,177
+  oql/shell/process_commands.py,69
+  oql/shell/protocol_commands.py,72
+  oql/shell/runner.py,85
+  oql/shell/session_commands.py,103
+  oql/shell/ui_commands.py,37
+  project.sh,35
+  tests/test_cli.py,49
+  tree.sh,2
+D:
+  oql/__init__.py:
+  oql/adapters/__init__.py:
+  oql/adapters/local.py:
+    e: LocalAdapter
+    LocalAdapter: __init__(1),execute(1)  # Execute OQL commands directly via oqlos library.
+  oql/adapters/remote.py:
+    e: RemoteAdapter
+    RemoteAdapter: __init__(1),execute(1),list_scenarios(0),list_hardware(0)  # Execute OQL commands via OqlOS REST API.
+  oql/cli.py:
+    e: main,_build_single_command_scenario,_execute_single_command,run,_generate_report,report,validate,cmd,hardware,scenarios,shell_cmd
+    main()
+    _build_single_command_scenario(command)
+    _execute_single_command(command;firmware_url;mode)
+    run(file;step;mode;firmware_url;report;output)
+    _generate_report(result;fmt)
+    report(data_file;output)
+    validate(file)
+    cmd(command;mode;firmware_url)
+    hardware(url)
+    scenarios(url)
+    shell_cmd()
+  oql/core/__init__.py:
+  oql/core/event_store.py:
+  oql/shell/__init__.py:
+  oql/shell/api_commands.py:
+    e: ApiCommandsMixin
+    ApiCommandsMixin: cmd_api(1),cmd_create_protocol(1)  # Commands that make HTTP calls to the backend API.
+  oql/shell/commands.py:
+    e: _cmd_exit,_cmd_events,_cmd_clear,_cmd_connect,_cmd_disconnect,_cmd_run,_cmd_scripts,_cmd_list,ShellCommandRegistry
+    ShellCommandRegistry: __init__(0),register(3),get_handler(1)  # Registry for interactive shell commands.
+    _cmd_exit(ex;args)
+    _cmd_events(ex;args)
+    _cmd_clear(ex;args)
+    _cmd_connect(ex;args)
+    _cmd_disconnect(ex;args)
+    _cmd_run(ex;args)
+    _cmd_scripts(ex;args)
+    _cmd_list(ex;args)
+  oql/shell/executor.py:
+    e: DslExecutor
+    DslExecutor: __init__(1),connect_websocket(1),disconnect_websocket(0),emit_event(2),execute(1),execute_script(1),_parse_target_and_json(1),_generate_id(0)  # Execute DSL commands
+  oql/shell/process_commands.py:
+    e: ProcessCommandsMixin
+    ProcessCommandsMixin: cmd_emit(1),cmd_render(1),cmd_layout(1),cmd_state_save(1),cmd_state_restore(1),cmd_process_start(1),cmd_process_next(1)  # Commands for process flow, components, state, and events.
+  oql/shell/protocol_commands.py:
+    e: ProtocolCommandsMixin
+    ProtocolCommandsMixin: cmd_select_device(1),cmd_select_interval(1),cmd_start_test(1),cmd_step_complete(1),cmd_protocol_created(1),cmd_protocol_finalize(1)  # Commands for test flow and protocol management.
+  oql/shell/runner.py:
+    e: run_shell,run_script,run_command,main
+    run_shell()
+    run_script(filename)
+    run_command(command)
+    main()
+  oql/shell/session_commands.py:
+    e: SessionCommandsMixin
+    SessionCommandsMixin: cmd_record_start(1),cmd_record_stop(1),cmd_wait(1),cmd_log(1),cmd_help(1)  # Commands for recording sessions, waiting, logging, and help.
+  oql/shell/ui_commands.py:
+    e: UiCommandsMixin
+    UiCommandsMixin: cmd_navigate(1),cmd_click(1),cmd_input(1)  # Commands for browser UI interaction.
+  tests/test_cli.py:
+    e: TestCli
+    TestCli: test_help(0),test_version(0),test_single_command_scenario_wrapper(0),test_cmd_subcommand_invokes_helper(1)

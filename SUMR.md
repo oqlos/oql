@@ -1,23 +1,18 @@
 # OQL — Command Line Interface for OqlOS
 
-OQL CLI — command line interface for OqlOS
+SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorization
 
 ## Contents
 
 - [Metadata](#metadata)
 - [Architecture](#architecture)
-- [Interfaces](#interfaces)
 - [Workflows](#workflows)
 - [Quality Pipeline (`pyqual.yaml`)](#quality-pipeline-pyqualyaml)
-- [Configuration](#configuration)
 - [Dependencies](#dependencies)
-- [Deployment](#deployment)
-- [Environment Variables (`.env.example`)](#environment-variables-envexample)
-- [Release Management (`goal.yaml`)](#release-management-goalyaml)
-- [Code Analysis](#code-analysis)
 - [Source Map](#source-map)
 - [Call Graph](#call-graph)
 - [Test Contracts](#test-contracts)
+- [Refactoring Analysis](#refactoring-analysis)
 - [Intent](#intent)
 
 ## Metadata
@@ -28,7 +23,7 @@ OQL CLI — command line interface for OqlOS
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
-- **generated_from**: pyproject.toml, Taskfile.yml, testql(3), app.doql.less, pyqual.yaml, goal.yaml, .env.example, src(1 mod), project/(2 analysis files)
+- **generated_from**: pyproject.toml, Taskfile.yml, testql(3), app.doql.less, pyqual.yaml, goal.yaml, .env.example, src(1 mod), project/(5 analysis files)
 
 ## Architecture
 
@@ -154,60 +149,6 @@ environment[name="local"] {
 ### Source Modules
 
 - `oql.cli`
-
-## Interfaces
-
-### CLI Entry Points
-
-- `oqlctl`
-
-### testql Scenarios
-
-#### `testql-scenarios/cross-project-integration.testql.toon.yaml`
-
-```toon markpact:testql path=testql-scenarios/cross-project-integration.testql.toon.yaml
-# SCENARIO: Cross-Project Integration Tests
-# TYPE: integration
-# GENERATED: true
-# PROJECTS: project
-
-CONFIG[1]{key, value}:
-  mode, cross-project
-
-LOG[1]{message}:
-  "Project: project"
-```
-
-#### `testql-scenarios/generated-cli-tests.testql.toon.yaml`
-
-```toon markpact:testql path=testql-scenarios/generated-cli-tests.testql.toon.yaml
-# SCENARIO: CLI Command Tests
-# TYPE: cli
-# GENERATED: true
-
-CONFIG[2]{key, value}:
-  cli_command, python -m oql
-  timeout_ms, 10000
-
-LOG[3]{message}:
-  "Test CLI help command"
-  "Test CLI version command"
-  "Test CLI main workflow"
-```
-
-#### `testql-scenarios/generated-from-pytests.testql.toon.yaml`
-
-```toon markpact:testql path=testql-scenarios/generated-from-pytests.testql.toon.yaml
-# SCENARIO: Auto-generated from Python Tests
-# TYPE: integration
-# GENERATED: true
-
-LOG[4]{message}:
-  "Test: TestCli_test_cmd_subcommand_invokes_helper"
-  "Test: test_cmd_subcommand_invokes_helper"
-  "Test: TestCli_test_cmd_subcommand_invokes_helper"
-  "Test: test_cmd_subcommand_invokes_helper"
-```
 
 ## Workflows
 
@@ -416,15 +357,6 @@ pipeline:
     LLM_MODEL: openrouter/qwen/qwen3-coder-next
 ```
 
-## Configuration
-
-```yaml
-project:
-  name: oql
-  version: 0.1.1
-  env: local
-```
-
 ## Dependencies
 
 ### Runtime
@@ -447,137 +379,6 @@ pytest
 goal>=2.1.0
 costs>=0.1.20
 pfix>=0.1.60
-```
-
-## Deployment
-
-```bash markpact:run
-pip install oql
-
-# development install
-pip install -e .[dev]
-```
-
-## Environment Variables (`.env.example`)
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `OPENROUTER_API_KEY` | `*(not set)*` | Required: OpenRouter API key (https://openrouter.ai/keys) |
-| `LLM_MODEL` | `openrouter/qwen/qwen3-coder-next` | Model (default: openrouter/qwen/qwen3-coder-next) |
-| `PFIX_AUTO_APPLY` | `true` | true = apply fixes without asking |
-| `PFIX_AUTO_INSTALL_DEPS` | `true` | true = auto pip/uv install |
-| `PFIX_AUTO_RESTART` | `false` | true = os.execv restart after fix |
-| `PFIX_MAX_RETRIES` | `3` |  |
-| `PFIX_DRY_RUN` | `false` |  |
-| `PFIX_ENABLED` | `true` |  |
-| `PFIX_GIT_COMMIT` | `false` | true = auto-commit fixes |
-| `PFIX_GIT_PREFIX` | `pfix:` | commit message prefix |
-| `PFIX_CREATE_BACKUPS` | `false` | false = disable .pfix_backups/ directory |
-
-## Release Management (`goal.yaml`)
-
-- **versioning**: `semver`
-- **commits**: `conventional` scope=`oql`
-- **changelog**: `keep-a-changelog`
-- **build strategies**: `python`, `nodejs`, `rust`
-- **version files**: `pyproject.toml:version`, `oql/__init__.py:__version__`
-
-## Code Analysis
-
-### `project/map.toon.yaml`
-
-```toon markpact:analysis path=project/map.toon.yaml
-# oql | 21f 1379L | python:17,shell:2,css:1,less:1 | 2026-04-19
-# stats: 23 func | 10 cls | 21 mod | CC̄=2.8 | critical:1 | cycles:0
-# alerts[5]: CC _cmd_list=10; CC run_shell=8; CC shell_cmd=5; CC _cmd_run=5; CC main=5
-# hotspots[5]: run fan=12; hardware fan=9; report fan=8; _cmd_run fan=8; _cmd_list fan=8
-# evolution: baseline
-# Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[21]:
-  app.doql.css,109
-  app.doql.less,111
-  oql/__init__.py,4
-  oql/adapters/__init__.py,1
-  oql/adapters/local.py,21
-  oql/adapters/remote.py,35
-  oql/cli.py,180
-  oql/core/__init__.py,1
-  oql/core/event_store.py,16
-  oql/shell/__init__.py,16
-  oql/shell/api_commands.py,117
-  oql/shell/commands.py,139
-  oql/shell/executor.py,177
-  oql/shell/process_commands.py,69
-  oql/shell/protocol_commands.py,72
-  oql/shell/runner.py,85
-  oql/shell/session_commands.py,103
-  oql/shell/ui_commands.py,37
-  project.sh,35
-  tests/test_cli.py,49
-  tree.sh,2
-D:
-  oql/__init__.py:
-  oql/adapters/__init__.py:
-  oql/adapters/local.py:
-    e: LocalAdapter
-    LocalAdapter: __init__(1),execute(1)  # Execute OQL commands directly via oqlos library.
-  oql/adapters/remote.py:
-    e: RemoteAdapter
-    RemoteAdapter: __init__(1),execute(1),list_scenarios(0),list_hardware(0)  # Execute OQL commands via OqlOS REST API.
-  oql/cli.py:
-    e: main,_build_single_command_scenario,_execute_single_command,run,_generate_report,report,validate,cmd,hardware,scenarios,shell_cmd
-    main()
-    _build_single_command_scenario(command)
-    _execute_single_command(command;firmware_url;mode)
-    run(file;step;mode;firmware_url;report;output)
-    _generate_report(result;fmt)
-    report(data_file;output)
-    validate(file)
-    cmd(command;mode;firmware_url)
-    hardware(url)
-    scenarios(url)
-    shell_cmd()
-  oql/core/__init__.py:
-  oql/core/event_store.py:
-  oql/shell/__init__.py:
-  oql/shell/api_commands.py:
-    e: ApiCommandsMixin
-    ApiCommandsMixin: cmd_api(1),cmd_create_protocol(1)  # Commands that make HTTP calls to the backend API.
-  oql/shell/commands.py:
-    e: _cmd_exit,_cmd_events,_cmd_clear,_cmd_connect,_cmd_disconnect,_cmd_run,_cmd_scripts,_cmd_list,ShellCommandRegistry
-    ShellCommandRegistry: __init__(0),register(3),get_handler(1)  # Registry for interactive shell commands.
-    _cmd_exit(ex;args)
-    _cmd_events(ex;args)
-    _cmd_clear(ex;args)
-    _cmd_connect(ex;args)
-    _cmd_disconnect(ex;args)
-    _cmd_run(ex;args)
-    _cmd_scripts(ex;args)
-    _cmd_list(ex;args)
-  oql/shell/executor.py:
-    e: DslExecutor
-    DslExecutor: __init__(1),connect_websocket(1),disconnect_websocket(0),emit_event(2),execute(1),execute_script(1),_parse_target_and_json(1),_generate_id(0)  # Execute DSL commands
-  oql/shell/process_commands.py:
-    e: ProcessCommandsMixin
-    ProcessCommandsMixin: cmd_emit(1),cmd_render(1),cmd_layout(1),cmd_state_save(1),cmd_state_restore(1),cmd_process_start(1),cmd_process_next(1)  # Commands for process flow, components, state, and events.
-  oql/shell/protocol_commands.py:
-    e: ProtocolCommandsMixin
-    ProtocolCommandsMixin: cmd_select_device(1),cmd_select_interval(1),cmd_start_test(1),cmd_step_complete(1),cmd_protocol_created(1),cmd_protocol_finalize(1)  # Commands for test flow and protocol management.
-  oql/shell/runner.py:
-    e: run_shell,run_script,run_command,main
-    run_shell()
-    run_script(filename)
-    run_command(command)
-    main()
-  oql/shell/session_commands.py:
-    e: SessionCommandsMixin
-    SessionCommandsMixin: cmd_record_start(1),cmd_record_stop(1),cmd_wait(1),cmd_log(1),cmd_help(1)  # Commands for recording sessions, waiting, logging, and help.
-  oql/shell/ui_commands.py:
-    e: UiCommandsMixin
-    UiCommandsMixin: cmd_navigate(1),cmd_click(1),cmd_input(1)  # Commands for browser UI interaction.
-  tests/test_cli.py:
-    e: TestCli
-    TestCli: test_help(0),test_version(0),test_single_command_scenario_wrapper(0),test_cmd_subcommand_invokes_helper(1)
 ```
 
 ## Source Map
@@ -664,6 +465,162 @@ EDGES:
 **`Cross-Project Integration Tests`**
 
 **`Auto-generated from Python Tests`**
+
+## Refactoring Analysis
+
+*Pre-refactoring snapshot — use this section to identify targets. Generated from `project/` toon files.*
+
+### Call Graph & Complexity (`project/calls.toon.yaml`)
+
+```toon markpact:analysis path=project/calls.toon.yaml
+# code2llm call graph | /home/tom/github/oqlos/oql
+# nodes: 6 | edges: 4 | modules: 2
+# CC̄=2.4
+
+HUBS[20]:
+  oql.shell.runner.run_shell
+    CC=8  in:1  out:10  total:11
+  oql.shell.runner.main
+    CC=5  in:0  out:11  total:11
+  oql.cli.cmd
+    CC=1  in:0  out:7  total:7
+  oql.shell.runner.run_command
+    CC=1  in:1  out:4  total:5
+  oql.cli._execute_single_command
+    CC=2  in:1  out:3  total:4
+  oql.cli._build_single_command_scenario
+    CC=2  in:1  out:3  total:4
+
+MODULES:
+  oql.cli  [3 funcs]
+    _build_single_command_scenario  CC=2  out:3
+    _execute_single_command  CC=2  out:3
+    cmd  CC=1  out:7
+  oql.shell.runner  [3 funcs]
+    main  CC=5  out:11
+    run_command  CC=1  out:4
+    run_shell  CC=8  out:10
+
+EDGES:
+  oql.cli._execute_single_command → oql.cli._build_single_command_scenario
+  oql.cli.cmd → oql.cli._execute_single_command
+  oql.shell.runner.main → oql.shell.runner.run_shell
+  oql.shell.runner.main → oql.shell.runner.run_command
+```
+
+### Code Analysis (`project/analysis.toon.yaml`)
+
+```toon markpact:analysis path=project/analysis.toon.yaml
+# code2llm | 18f 1093L | python:16,shell:2 | 2026-04-19
+# CC̄=2.4 | critical:0/63 | dups:0 | cycles:0
+
+HEALTH[0]: ok
+
+REFACTOR[0]: none needed
+
+PIPELINES[54]:
+  [1] Src [cmd_select_device]: cmd_select_device
+      PURITY: 100% pure
+  [2] Src [cmd_select_interval]: cmd_select_interval
+      PURITY: 100% pure
+  [3] Src [cmd_start_test]: cmd_start_test
+      PURITY: 100% pure
+  [4] Src [cmd_step_complete]: cmd_step_complete
+      PURITY: 100% pure
+  [5] Src [cmd_protocol_created]: cmd_protocol_created
+      PURITY: 100% pure
+
+LAYERS:
+  oql/                            CC̄=2.4    ←in:0  →out:0
+  │ cli                        179L  0C   11m  CC=5      ←0
+  │ executor                   176L  1C    8m  CC=9      ←0
+  │ commands                   138L  1C   11m  CC=11     ←0
+  │ api_commands               116L  1C    2m  CC=11     ←0
+  │ session_commands           102L  1C    5m  CC=2      ←0
+  │ runner                      84L  0C    4m  CC=8      ←0
+  │ protocol_commands           71L  1C    6m  CC=3      ←0
+  │ process_commands            68L  1C    7m  CC=3      ←0
+  │ ui_commands                 36L  1C    3m  CC=1      ←0
+  │ remote                      34L  1C    4m  CC=1      ←0
+  │ local                       20L  1C    2m  CC=1      ←0
+  │ event_store                 15L  0C    0m  CC=0.0    ←0
+  │ __init__                    15L  0C    0m  CC=0.0    ←0
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ __init__                     0L  0C    0m  CC=0.0    ←0
+  │ __init__                     0L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ project.sh                  35L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
+  │
+  ── zero ──
+     oql/adapters/__init__.py                  0L
+     oql/core/__init__.py                      0L
+
+COUPLING: no cross-package imports detected
+
+EXTERNAL:
+  validation: run `vallm batch .` → validation.toon
+  duplication: run `redup scan .` → duplication.toon
+```
+
+### Evolution / Churn (`project/evolution.toon.yaml`)
+
+```toon markpact:analysis path=project/evolution.toon.yaml
+# code2llm/evolution | 63 func | 11f | 2026-04-19
+
+NEXT[0]: no refactoring needed
+
+RISKS[0]: none
+
+METRICS-TARGET:
+  CC̄:          2.4 → ≤1.7
+  max-CC:      11 → ≤5
+  god-modules: 0 → 0
+  high-CC(≥15): 0 → ≤0
+  hub-types:   0 → ≤0
+
+PATTERNS (language parser shared logic):
+  _extract_declarations() in base.py — unified extraction for:
+    - TypeScript: interfaces, types, classes, functions, arrow funcs
+    - PHP: namespaces, traits, classes, functions, includes
+    - Ruby: modules, classes, methods, requires
+    - C++: classes, structs, functions, #includes
+    - C#: classes, interfaces, methods, usings
+    - Java: classes, interfaces, methods, imports
+    - Go: packages, functions, structs
+    - Rust: modules, functions, traits, use statements
+
+  Shared regex patterns per language:
+    - import: language-specific import/require/using patterns
+    - class: class/struct/trait declarations with inheritance
+    - function: function/method signatures with visibility
+    - brace_tracking: for C-family languages ({ })
+    - end_keyword_tracking: for Ruby (module/class/def...end)
+
+  Benefits:
+    - Consistent extraction logic across all languages
+    - Reduced code duplication (~70% reduction in parser LOC)
+    - Easier maintenance: fix once, apply everywhere
+    - Standardized FunctionInfo/ClassInfo models
+
+HISTORY:
+  prev CC̄=2.4 → now CC̄=2.4
+```
+
+### Validation (`project/validation.toon.yaml`)
+
+```toon markpact:analysis path=project/validation.toon.yaml
+# vallm batch | 34f | 23✓ 0⚠ 0✗ | 2026-04-18
+
+SUMMARY:
+  scanned: 34  passed: 23 (67.6%)  warnings: 0  errors: 0  unsupported: 11
+
+UNSUPPORTED[3]{bucket,count}:
+  *.md,5
+  *.yml,2
+  other,4
+```
 
 ## Intent
 
