@@ -1,0 +1,10 @@
+# SCENARIO: Cross-Project Integration Tests
+# TYPE: integration
+# GENERATED: true
+# PROJECTS: project
+
+CONFIG[1]{key, value}:
+  mode, cross-project
+
+LOG[1]{message}:
+  "Project: project"
